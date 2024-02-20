@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { nanoid } from "nanoid";
+import axios from "axios";
 
 import Todo from "./Todo";
 
@@ -8,15 +9,41 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [value, setValue] = useState("");
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/get")
+      .then((result) => setTodos(result.data))
+      .catch((err) => err.message);
+  }, []);
+
   const taskHandler = (e) => {
     e.preventDefault();
-    setTodos([...todos, value]);
+    axios
+      .post("http://localhost:3000/add", {
+        task: value,
+      })
+      .then((result) => console.log(result));
+    // setTodos([...todos, value]);
+    location.reload();
     setValue("");
   };
 
-  const deleteHandler = (value) => {
-    const updatedTodos = todos.filter((item) => item !== value);
-    setTodos(updatedTodos);
+  const editHandler = (id) => {
+    axios
+      .put(`http://localhost:3000/update/${id}`)
+      .then((results) => console.log(results))
+      .catch((err) => console.log(err.message));
+    location.reload();
+  };
+
+  const deleteHandler = (id) => {
+    axios
+      .delete(`http://localhost:3000/delete/${id}`)
+      .then((results) => console.log(results))
+      .catch((err) => console.log(err.message));
+    location.reload();
+    // const updatedTodos = todos.filter((item) => item._id !== id);
+    // setTodos(updatedTodos);
   };
 
   return (
@@ -32,7 +59,14 @@ function App() {
       <div className="listItems">
         {todos.map((todo) => {
           const id = nanoid();
-          return <Todo key={id} todo={todo} deleteHandler={deleteHandler} />;
+          return (
+            <Todo
+              key={id}
+              todo={todo}
+              deleteHandler={deleteHandler}
+              editHandler={editHandler}
+            />
+          );
         })}
       </div>
     </div>

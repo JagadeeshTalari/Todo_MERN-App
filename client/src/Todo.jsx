@@ -7,23 +7,25 @@ import {
   BsTrashFill,
 } from "react-icons/bs";
 
-const Todo = ({ todo, deleteHandler }) => {
-  const [completed, setCompleted] = useState(false);
+const Todo = ({ todo, deleteHandler, editHandler }) => {
+  // const [completed, setCompleted] = useState(false);
   return (
     <div className="listItem">
       {/* index for now */}
       <div
-        onClick={() => setCompleted(!completed)}
-        className={completed ? `strike-through` : null}
+        onClick={() => {
+          editHandler(todo._id);
+        }}
+        className={todo.done ? `strike-through` : `active`}
       >
-        {completed ? (
+        {todo.done ? (
           <BsCheckCircleFill style={{ marginRight: "15px" }} />
         ) : (
           <BsCircleFill style={{ marginRight: "15px" }} />
         )}
-        {todo}
+        {todo.task}
       </div>
-      <div onClick={() => deleteHandler(todo)}>
+      <div onClick={() => deleteHandler(todo._id)}>
         <BsTrashFill />
       </div>
     </div>

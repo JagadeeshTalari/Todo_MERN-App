@@ -1,14 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const { TodoModel } = require("./Model/todo.model");
+const TodoModel = require("./Model/todo.model");
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
+app.get("/get", (req, res) => {
   TodoModel.find({})
     .then((results) => res.json(results))
     .catch((err) => console.log(err.message));
@@ -17,26 +17,26 @@ app.get("/", (req, res) => {
 app.post("/add", (req, res) => {
   const task = req.body.task;
   TodoModel.create({ task })
-    .then((results) => res.json(results))
+    .then((results) => res.status(201).json(results))
     .catch((err) => console.log(err.message));
 });
 
 app.put("/update/:id", (req, res) => {
-  const id = req.params;
+  const { id } = req.params;
   TodoModel.findByIdAndUpdate(
     { _id: id },
     {
       done: true,
     }
   )
-    .then((results) => res.json(results))
+    .then((results) => res.status(204).json(results))
     .catch((err) => console.log(err.message));
 });
 
-app.put("/delete/:id", (req, res) => {
-  const id = req.params;
+app.delete("/delete/:id", (req, res) => {
+  const { id } = req.params;
   TodoModel.findByIdAndDelete({ _id: id })
-    .then((results) => res.json(results))
+    .then((results) => res.status(200).json(results))
     .catch((err) => console.log(err.message));
 });
 
